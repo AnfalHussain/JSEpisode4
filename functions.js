@@ -7,6 +7,10 @@
  ****************************************************************/
 function getBookById(bookId, books) {
   // Your code goes here
+ let result=  books.filter(book => book.id === bookId)
+ return result[0]
+
+
 }
 
 /**************************************************************
@@ -17,6 +21,10 @@ function getBookById(bookId, books) {
  * - returns undefined if no matching author is found
  ****************************************************************/
 function getAuthorByName(authorName, authors) {
+
+  let result=  authors.filter(author => (author.name).toLowerCase() === authorName.toLowerCase())
+  return result[0]
+ 
   // Your code goes here
 }
 
@@ -28,6 +36,19 @@ function getAuthorByName(authorName, authors) {
  ****************************************************************/
 function bookCountsByAuthor(authors) {
   // Your code goes here
+
+
+let somthing = authors.map(auth => {
+    let authorObj = {}
+    authorObj.author = auth.name
+    authorObj.bookCount = auth.books.length
+    return authorObj
+
+  })
+  
+
+console.log(somthing)
+return somthing
 }
 
 /**************************************************************
@@ -39,8 +60,35 @@ function bookCountsByAuthor(authors) {
  ****************************************************************/
 function booksByColor(books) {
   const colors = {};
+  
 
-  // Your code goes here
+  // books.filter(book => {
+  //   colors[book.color]. = 
+
+  // })
+  
+
+//  let myArray= []
+//  books.forEach(book => myArray.push(book.color))
+
+//   // Your code goes here
+//   myArray.forEach(color =>   console.log(color))
+//   myArray.filter()
+
+//   var i = myArray.length
+// while(i !== 0 )
+// {
+
+// }
+books.forEach(book => {
+  if (colors[book.color] === undefined) {
+    colors[book.color] = []
+    colors[book.color].push(book.title)
+  } else {
+    colors[book.color].push(book.title)
+  }
+ }
+ )
 
   return colors;
 }
@@ -55,6 +103,15 @@ function booksByColor(books) {
  ****************************************************************/
 function titlesByAuthorName(authorName, authors, books) {
   // Your code goes here
+    let titles = []
+    const author  = getAuthorByName(authorName, authors)
+    
+    if (!author) 
+      return titles
+    titles = author.books.map(bookId => getBookById(bookId, books).title)
+
+return titles;
+  
 }
 
 /**************************************************************
@@ -66,6 +123,19 @@ function titlesByAuthorName(authorName, authors, books) {
  ****************************************************************/
 function mostProlificAuthor(authors) {
   // Your code goes here
+  let prolificAuthor = authors[0]
+  authors.forEach(author =>{
+    if (author.books.length > prolificAuthor.books.length)
+    {
+      prolificAuthor = author;
+    }
+  
+  })
+
+  return prolificAuthor.name;
+
+
+
 }
 
 /**************************************************************
@@ -92,7 +162,15 @@ function mostProlificAuthor(authors) {
  * BONUS: REMOVE DUPLICATE BOOKS
  ****************************************************************/
 function relatedBooks(bookId, authors, books) {
-  // Your code goes here
+  const book = getBookById(bookId,books);
+  let titles = [];
+  book.authors.forEach(author =>{ titles =  titles.concat(titlesByAuthorName(author.name, authors, books) )
+
+  })
+
+  return titles;
+
+
 }
 
 /**************************************************************
@@ -102,7 +180,28 @@ function relatedBooks(bookId, authors, books) {
  *   co-authored the greatest number of books
  ****************************************************************/
 function friendliestAuthor(authors) {
-  // Your code goes here
+  authors.forEach(author =>{
+    author.coauthoringCount = 0; // for each author we are intializing the number of books the author co-wrote to zero
+    
+    authors.forEach(secondAuthor =>{
+      if(secondAuthor.name !== author.name) // checking that the first and second  authers are not the same
+      {
+        // shardBooks is an array of the books that the author cowrote
+        const shardBooks = secondAuthor.books.filter(bookId => author.books.includes(bookId) );
+        author.coauthoringCount += shardBooks.length
+      }
+    });
+  });
+  let friendlyAuthor = authors[0];
+
+  authors.forEach(author =>{
+    if (author.coauthoringCount> friendlyAuthor.coauthoringCount){
+      friendlyAuthor = author; //The new friendlyAuthor
+    }
+  })
+  return friendlyAuthor.name;
+
+
 }
 
 module.exports = {
